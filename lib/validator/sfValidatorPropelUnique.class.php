@@ -155,9 +155,20 @@ class sfValidatorPropelUnique extends sfValidatorSchema
       throw $error;
     }
 
-    $columns = $this->getOption('column');
+    $errorSchema = new sfValidatorErrorSchema(
+      $this,
+      array_combine(
+        $keys = (
+        !empty($fields) ?
+          $fields :
+          /* bwc - sarebbe più corretto associare l'errore a tutte le colonne? */
+          $this->getOption('column')
+        ),
+        array_fill(0, count($keys), $error)
+      )
+    );
 
-    throw new sfValidatorErrorSchema($this, array($columns[0] => $error));
+    throw $errorSchema;
   }
 
   /**
